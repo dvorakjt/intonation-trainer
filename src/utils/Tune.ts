@@ -24,8 +24,11 @@ export default class Tune {
         }
     }
 
-    addVoice(name:string, key:string, transpose:number, clef:string, notes:string) {
-        const v = new Voice(eval(this.L), name, key, transpose, clef, notes);
+    addVoice(name:string, key:string, transpose:number, clef:string, notes:string, displayName?:string) {
+        let v;
+        let LtoNum = eval(this.L);
+        if(displayName) v = new Voice(LtoNum, name, key, transpose, clef, notes, displayName);
+        else v = new Voice(LtoNum, name, key, transpose, clef, notes);
         this.voices.push(v);
     }
 
@@ -35,8 +38,7 @@ export default class Tune {
 M: ${this.M}
 L: ${this.L}
 K:
-%%%%staves ${this.staves}
-K: ${this.K}
+%%staves ${this.staves}
 ${this.voices.map(v => {
     return v.toString();
 }).join("\n")}
