@@ -34,7 +34,7 @@ export abstract class Instrument {
     get detunedPlaybackData() {
         return this.voices.map(v => v.toDetunedPlaybackVoice());
     }
-
+    
     abstract addVoice(notes:string, detuneAll:number, detuneChords:detuneChord[]) : void;
 
     abstract get staveOrganization() : string;

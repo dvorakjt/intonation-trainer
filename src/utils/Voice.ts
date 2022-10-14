@@ -6,7 +6,7 @@ export type detuneChord = {
 }
 
 type detunePitch = {
-    pitch:number;
+    pitch:string;
     detuneBy:number;
 }
 
@@ -38,7 +38,7 @@ export class Voice {
     }
 
     toString() {
-        return `V:${this.voiceName} clef=${this.clef} transpose=${this.transpose}${this.displayName && ` name="${this.displayName}"`}${this.subname && ` subname="${this.subname}"`}\n[K:${this.key}]${this.notes}`;
+        return `V:${this.voiceName} clef=${this.clef} transpose=${this.transpose}${this.displayName ? ` name="${this.displayName}"` : ""}${this.subname ? ` subname="${this.subname}"` : ""}\n[K:${this.key}]${this.notes}`;
     }
 
     toPlaybackVoice() {
@@ -47,7 +47,7 @@ export class Voice {
 
     toDetunedPlaybackVoice() {
         if(this.detuneAll !== 0) return PlaybackVoice.completelyDetunedVoice(this.MIDINum, this.key, this.transpose, this.L, this.notes, this.detuneAll);
-        //else if(this.detuneChords) return PlaybackVoice.partiallyDetunedVoice(this.MIDINum, this.key, this.transpose, this.L, this.notes, this.detuneAll);
+        else if(this.detuneChords.length) return PlaybackVoice.partiallyDetunedVoice(this.MIDINum, this.key, this.transpose, this.L, this.notes, this.detuneChords);
         else return new PlaybackVoice(this.MIDINum, this.key, this.transpose, this.L, this.notes);
     }
 }

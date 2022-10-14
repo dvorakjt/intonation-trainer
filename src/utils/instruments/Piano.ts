@@ -12,7 +12,7 @@ export class Piano extends Instrument {
     }
 
     addVoice(notes: string, detuneAll: number, detuneChords: detuneChord[], stave?:number): void {
-        const voiceName = "Piano-" + (this.partLabel ? this.partLabel : "0") + "-" + this.voices.length;
+        const voiceName = "Piano" + (this.partLabel ? this.partLabel : "0") + "V" + this.voices.length;
         let clef;
         if(stave === 0) {
             clef = "treble";
@@ -23,7 +23,7 @@ export class Piano extends Instrument {
             this.voiceNamesRH.push(voiceName);
         }
         let v;
-        if(!this.voices) v = new Voice(this.L, voiceName, this.MIDINum, this.key, this.transpose, clef, notes, detuneAll, detuneChords, this.name, this.subname);
+        if(!this.voices.length) v = new Voice(this.L, voiceName, this.MIDINum, this.key, this.transpose, clef, notes, detuneAll, detuneChords, this.name, this.subname);
         else v = new Voice(this.L, voiceName, this.MIDINum, this.key, this.transpose, clef, notes, detuneAll, detuneChords);
         this.voices.push(v);
     }

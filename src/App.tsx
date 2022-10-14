@@ -13,6 +13,18 @@ function App() {
   flute.addVoice("cdef | g/f/e/d/ c2 |]", 0, []);
   const detunedFlute = t.addInstrument(INSTRUMENTS.FLUTE, "2")
   detunedFlute.addVoice("cdef | g/f/e/d/ c2 |]", -0.25, []);
+  const partiallyDetunedFlute = t.addInstrument(INSTRUMENTS.FLUTE, "3");
+  partiallyDetunedFlute.addVoice("cdef | g/f/e/d/ c2 |]", 0, [
+    {
+      chordIndex: 8,
+      detunePitches: [
+        {
+          pitch: "c",
+          detuneBy: 0.5
+        }
+      ]
+    }
+  ])
   const piano = t.addInstrument(INSTRUMENTS.PIANO, "");
   (piano as Piano).addVoiceLH("[CEG]2 [CEA]2 | [CEG] [GFDB,] [CEGc]2 |]", 0, []);
   (piano as Piano).addVoiceRH("C,4 | G, G,, C,2 |]", 0, []);

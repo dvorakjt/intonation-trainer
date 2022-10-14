@@ -1,6 +1,6 @@
 import { Chord } from "./Chord";
-import { instrumentNameToNumber } from "./instrumentNameToNumber";
-import { notationToChords } from "./notationToChords";
+import { detuneChord } from "./Voice";
+import { notationToChords, noteToMidiNumber } from "./notationToChords";
 
 export class PlaybackVoice {
     public instrument:number;
@@ -15,6 +15,18 @@ export class PlaybackVoice {
         const v = new PlaybackVoice(MIDINum, key, transpose, L, abcNotation);
         v.chords.forEach(c => {
             c.pitches = c.pitches.map(p => p + detuneBy);
+        });
+        return v;
+    }
+
+    static partiallyDetunedVoice(MIDINum:number, key:string, transpose:number, L:number, abcNotation:string, detuneChords:detuneChord[]) {
+        const v = new PlaybackVoice(MIDINum, key, transpose, L, abcNotation);
+        detuneChords.forEach(chordDetuning => {
+            const chordToDetune = v.chords[chordDetuning.chordIndex];
+            chordDetuning.detunePitches.forEach(pitchDetuning => {
+                let pitchIndex = chordToDetune.pitches.findIndex(a => a === noteToMidiNumber(pitchDetuning.pitch, key, transpose));
+                if(pitchIndex >= 0) chordToDetune.pitches[pitchIndex] += pitchDetuning.detuneBy;
+            });
         });
         return v;
     }

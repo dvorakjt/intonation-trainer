@@ -36,39 +36,44 @@ function getMidiArray(key:string, notation:string, transpose:number) {
     if(key.includes("#")) {
         key.replace("#", "sharp");
     }
-    const keySignature = keys[key as keyof typeof keys];
     noteStrings?.forEach(note => {
         //if the note is a natural note that doesn't begin with an = sign, look up the note in the key, and update the accidental accordingly
-        if(/[A-G]/i.test(note[0])) {
-            const accidental = keySignature[note[0].toUpperCase() as keyof typeof keySignature];
-            note = accidental + note;
-        }
-        let midiNum = null;
-        if(note.includes("__")) {
-            midiNum = tables.doubleFlatNotes[note as keyof typeof tables.doubleFlatNotes];
-        }
-        else if(note.includes("^^")) {
-            midiNum = tables.doubleSharpNotes[note as keyof typeof tables.doubleSharpNotes];
-        }
-        else if(note.includes("_")) {
-            midiNum = tables.flatNotes[note as keyof typeof tables.flatNotes];
-        }
-        else if(note.includes("_")) {
-            midiNum = tables.sharpNotes[note as keyof typeof tables.sharpNotes];
-        }
-        else {
-            //if the note includes a natural sign, remove it
-            if(note.includes("=")) {
-                note = note.slice(1, note.length); 
-            }
-            midiNum = tables.naturalNotes[note as keyof typeof tables.naturalNotes];
-        }
-        if(midiNum) {
-            midiNum += transpose;
-            midiNotes.push(midiNum);
-        }
+        const midiNum = noteToMidiNumber(note, key, transpose);
+        if(midiNum) midiNotes.push(midiNum);
     });
     return midiNotes;
+}
+
+export function noteToMidiNumber(note:string, key:string, transpose:number) {
+    const keySignature = keys[key as keyof typeof keys];
+    if(/[A-G]/i.test(note[0])) {
+        const accidental = keySignature[note[0].toUpperCase() as keyof typeof keySignature];
+        note = accidental + note;
+    }
+    let midiNum = null;
+    if(note.includes("__")) {
+        midiNum = tables.doubleFlatNotes[note as keyof typeof tables.doubleFlatNotes];
+    }
+    else if(note.includes("^^")) {
+        midiNum = tables.doubleSharpNotes[note as keyof typeof tables.doubleSharpNotes];
+    }
+    else if(note.includes("_")) {
+        midiNum = tables.flatNotes[note as keyof typeof tables.flatNotes];
+    }
+    else if(note.includes("_")) {
+        midiNum = tables.sharpNotes[note as keyof typeof tables.sharpNotes];
+    }
+    else {
+        //if the note includes a natural sign, remove it
+        if(note.includes("=")) {
+            note = note.slice(1, note.length); 
+        }
+        midiNum = tables.naturalNotes[note as keyof typeof tables.naturalNotes];
+    }
+    if(midiNum) {
+        midiNum += transpose;
+    }
+    return midiNum;
 }
 
 export function notationToChords(L:number, key:string, transpose:number, notation:string) {
