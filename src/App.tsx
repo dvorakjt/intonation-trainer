@@ -4,17 +4,17 @@ import './App.css';
 import { Tune } from "./utils/Tune";
 import {MIDIPlayer} from "./features/playback/components/MIDIPlayer";
 import {NoteDisplay} from "./features/music-notation/NoteDisplay";
-import { INSTRUMENTS } from "./utils/instruments/constants/instruments";
+import { INSTRUMENTS_IN_SCORE_ORDER } from "./utils/instruments/constants";
 import { Piano } from './utils/instruments/Piano';
 
 function App() {
   const t = new Tune("C", "1/4", "C", 60);
-  const flute = t.addInstrument(INSTRUMENTS.FLUTE, "1");
+  const flute = t.addInstrument(INSTRUMENTS_IN_SCORE_ORDER.FLUTE, "1");
   flute.addVoice("cdef | g/f/e/d/ c2 |]", 0, []);
-  const detunedFlute = t.addInstrument(INSTRUMENTS.FLUTE, "2")
+  const detunedFlute = t.addInstrument(INSTRUMENTS_IN_SCORE_ORDER.FLUTE, "2")
   detunedFlute.addVoice("cdef | g/f/e/d/ c2 |]", -0.25, []);
-  const partiallyDetunedFlute = t.addInstrument(INSTRUMENTS.FLUTE, "3");
-  partiallyDetunedFlute.addVoice("cdef | g/f/e/d/ c2 |]", 0, [
+  const partiallyDetunedClar = t.addInstrument(INSTRUMENTS_IN_SCORE_ORDER.B_FLAT_CLARINET, "1");
+  partiallyDetunedClar.addVoice("cdef | g/f/e/d/ c2 |]", 0, [
     {
       chordIndex: 8,
       detunePitches: [
@@ -25,11 +25,11 @@ function App() {
       ]
     }
   ])
-  const piano = t.addInstrument(INSTRUMENTS.PIANO, "");
+  const piano = t.addInstrument(INSTRUMENTS_IN_SCORE_ORDER.PIANO, "");
   (piano as Piano).addVoiceLH("[CEG]2 [CEA]2 | [CEG] [GFDB,] [CEGc]2 |]", 0, []);
   (piano as Piano).addVoiceRH("C,4 | G, G,, C,2 |]", 0, []);
 
-  console.log(t.toABC());
+  console.log(t.toMIDIInTune());
 
   return (
     <div className="App">

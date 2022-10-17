@@ -48,6 +48,9 @@ export function noteToMidiNumber(note:string, key:string, transpose:number) {
     const keySignature = keys[key as keyof typeof keys];
     if(/[A-G]/i.test(note[0])) {
         const accidental = keySignature[note[0].toUpperCase() as keyof typeof keySignature];
+        if(key == "D") {
+            console.log(accidental + note);
+        }
         note = accidental + note;
     }
     let midiNum = null;
@@ -60,7 +63,7 @@ export function noteToMidiNumber(note:string, key:string, transpose:number) {
     else if(note.includes("_")) {
         midiNum = tables.flatNotes[note as keyof typeof tables.flatNotes];
     }
-    else if(note.includes("_")) {
+    else if(note.includes("^")) {
         midiNum = tables.sharpNotes[note as keyof typeof tables.sharpNotes];
     }
     else {

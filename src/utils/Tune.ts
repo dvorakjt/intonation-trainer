@@ -3,7 +3,8 @@ import { PlaybackData } from "./PlaybackData";
 import { Instrument } from "./instruments/Instrument";
 import { Flute } from "./instruments/Flute";
 import { Piano } from "./instruments/Piano";
-import { INSTRUMENTS } from "./instruments/constants/instruments";
+import { INSTRUMENTS_IN_SCORE_ORDER } from "./instruments/constants";
+import { BbClarinet } from "./instruments/BbClarinet";
 
 export class Tune {
     M:string;
@@ -26,14 +27,17 @@ export class Tune {
         }
     }
 
-    addInstrument(instrument:string, partLabel:string) : Instrument {
+    addInstrument(instrument:number, partLabel:string) : Instrument {
         let i;
         switch(instrument) {
-            case INSTRUMENTS.FLUTE :
+            case INSTRUMENTS_IN_SCORE_ORDER.FLUTE :
                 i = new Flute(this.tempo.noteValue, this.K, partLabel);
                 break;
-            case INSTRUMENTS.PIANO :
+            case INSTRUMENTS_IN_SCORE_ORDER.PIANO :
                 i = new Piano(this.tempo.noteValue, this.K, partLabel);
+                break;
+            case INSTRUMENTS_IN_SCORE_ORDER.B_FLAT_CLARINET :
+                i = new BbClarinet(this.tempo.noteValue, this.K, partLabel);
                 break;
             default :
                 i = new Flute(this.tempo.noteValue, this.K, partLabel);

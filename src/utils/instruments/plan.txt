@@ -1,0 +1,6 @@
+each instrument should have a range
+when pitches are being selected for ascending intervals, the lowest note of the interval should be >= the lowest note of the
+range of the instrument to play that note, and <= the upper range of the second instrument minus the interval
+this is the possible range of the exercise
+a starting note will be randomly selected from this range, and then the second note will be created based on the interval
+accidentals will be decided randomly

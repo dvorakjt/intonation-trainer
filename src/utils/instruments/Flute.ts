@@ -1,11 +1,21 @@
 import { Instrument } from "./Instrument";
+import { INSTRUMENTS_IN_SCORE_ORDER } from "./constants";
 import { Voice, detuneChord } from "../Voice";
 
 export class Flute extends Instrument {
     private voiceNames:string[];
 
     constructor(L:number, scoreKey:string, partLabel:string) {
-        super(L, Instrument.appendPartLabel("Flute", partLabel), Instrument.appendPartLabel("Fl.", partLabel), 771, scoreKey, 0, Instrument.getScoreOrder(1, partLabel), partLabel);
+        super(
+            L, 
+            Instrument.appendPartLabel("Flute", partLabel), 
+            Instrument.appendPartLabel("Fl.", partLabel), 
+            771, 
+            scoreKey, 
+            0, 
+            Instrument.getScoreOrder(INSTRUMENTS_IN_SCORE_ORDER.FLUTE, partLabel), 
+            partLabel
+        );
         this.voiceNames = [];
     }
 
@@ -23,8 +33,3 @@ export class Flute extends Instrument {
         }
     }
 }
-
-//const flute1 = Tune.addInstrument(instruments.FLUTE, 1) <--return a reference to that instrument
-//flute1.addVoice("notes");
-//tune.toString --> for each instrument, instrument.staveOrganization, also get all the voices of the instrument
-//there may be other methods I want
