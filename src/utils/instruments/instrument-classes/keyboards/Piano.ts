@@ -1,12 +1,24 @@
-import { Instrument } from "./Instrument";
-import { Voice, detuneChord } from "../Voice";
+import { Instrument } from "../../superclasses/Instrument";
+import { NonTransposingInstrument } from "../../superclasses/NonTransposingInstrument";
+import { INSTRUMENTS_IN_SCORE_ORDER } from "../../constants";
+import { Voice, detuneChord } from "../../../tune/Voice";
 
-export class Piano extends Instrument {
+export class Piano extends NonTransposingInstrument {
     private voiceNamesLH:string[];
     private voiceNamesRH:string[];
 
     constructor(L:number, scoreKey:string, partLabel:string) {
-        super(L, Instrument.appendPartLabel("Piano", partLabel), Instrument.appendPartLabel("Pno.", partLabel), 4, scoreKey, 0, Instrument.getScoreOrder(100, partLabel), partLabel);
+        super(
+            L, 
+            Instrument.appendPartLabel("Piano", partLabel), 
+            Instrument.appendPartLabel("Pno.", partLabel), 
+            4, 
+            scoreKey, 
+            Instrument.getScoreOrder(INSTRUMENTS_IN_SCORE_ORDER.PIANO, partLabel),
+            [21, 108],
+            [33, 93],
+            partLabel
+        );
         this.voiceNamesLH = [];
         this.voiceNamesRH = [];
     }

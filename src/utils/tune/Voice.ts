@@ -1,4 +1,4 @@
-import { PlaybackVoice } from "./PlaybackVoice";
+import { PlaybackVoice } from "./playback/PlaybackVoice";
 
 export type detuneChord = {
     chordIndex:number;
@@ -47,7 +47,10 @@ export class Voice {
 
     toDetunedPlaybackVoice() {
         if(this.detuneAll !== 0) return PlaybackVoice.completelyDetunedVoice(this.MIDINum, this.key, this.transpose, this.L, this.notes, this.detuneAll);
-        else if(this.detuneChords.length) return PlaybackVoice.partiallyDetunedVoice(this.MIDINum, this.key, this.transpose, this.L, this.notes, this.detuneChords);
+        else if(this.detuneChords.length){
+            console.log("partially detuned")
+            return PlaybackVoice.partiallyDetunedVoice(this.MIDINum, this.key, this.transpose, this.L, this.notes, this.detuneChords);
+        }
         else return new PlaybackVoice(this.MIDINum, this.key, this.transpose, this.L, this.notes);
     }
 }

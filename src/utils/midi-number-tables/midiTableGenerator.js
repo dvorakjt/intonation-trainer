@@ -1,14 +1,7 @@
 const fs = require('fs');
 
 const pitches = ["A", "B", "C", "D", "E", "F", "G"];
-
-let midiNum = 23; //A 0
-
-const modifiers = {
-    commas: ",,,,",
-    toLowerCase: false,
-    apostrophes: ""
-}
+const accidentals = ["__", "_", "", "^", "^^"];
 
 function nextPitchIndex(currentPitchIndex) {
     let newPitchIndex = currentPitchIndex + 1;
@@ -34,18 +27,28 @@ function updateModifiers(modifiers) {
 }
 
 const noteNamesToMidiNumbers = {};
-let currentPitchIndex = 0;
-
-while(midiNum <= 127) {
-    let currentPitch = pitches[currentPitchIndex];
-    if(modifiers.toLowerCase) currentPitch = currentPitch.toLowerCase();
-    currentPitch += modifiers.commas;
-    currentPitch += modifiers.apostrophes;
-    currentPitch = "^^" + currentPitch;
-    noteNamesToMidiNumbers[currentPitch] = midiNum;
-    currentPitchIndex = nextPitchIndex(currentPitchIndex);
-    midiNum = incrementMidiNum(currentPitchIndex, midiNum);
-    if(currentPitchIndex === 2) updateModifiers(modifiers);
+const midiToNoteNames = {};
+for(let i = 0; i < accidentals.length; i++) {
+  const accidental = accidentals[i];
+  let midiNum = 19 + i;
+  let currentPitchIndex = 0;
+  const modifiers = {
+    commas: ",,,,",
+    toLowerCase: false,
+    apostrophes: ""
+  }
+  while(midiNum <= 127) {
+      let currentPitch = pitches[currentPitchIndex];
+      if(modifiers.toLowerCase) currentPitch = currentPitch.toLowerCase();
+      currentPitch += modifiers.commas;
+      currentPitch += modifiers.apostrophes;
+      currentPitch = accidental + currentPitch;
+      if(!midiToNoteNames[midiNum]) midiToNoteNames[midiNum] = [];
+      midiToNoteNames[midiNum].push(currentPitch);
+      currentPitchIndex = nextPitchIndex(currentPitchIndex);
+      midiNum = incrementMidiNum(currentPitchIndex, midiNum);
+      if(currentPitchIndex === 2) updateModifiers(modifiers);
+  }
 }
 
-fs.writeFileSync("doubleSharpNotes.js", JSON.stringify(noteNamesToMidiNumbers, null, 2), 'utf-8');
+fs.writeFileSync("midiToNoteNames.js", JSON.stringify(midiToNoteNames, null, 2), 'utf-8');

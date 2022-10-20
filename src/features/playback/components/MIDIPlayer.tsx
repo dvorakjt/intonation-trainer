@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { PlaybackData } from "../../../utils/PlaybackData";
+import { PlaybackData } from "../../../utils/tune/playback/PlaybackData";
 import MIDISounds from "midi-sounds-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
@@ -39,24 +39,56 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
     const currentTime = this.midiSounds.contextTime();
     this.setState({ ...this.state, playing: true });
     let totalTime = 0;
+    let svgIndex = 0;
+    const SVGElements:any[] = [];
     this.props.playbackData.voices.forEach((voice) => {
       totalTime = 0;
       const { instrument, chords } = voice;
       chords.forEach(c => {
           const { pitches, duration } = c;
           const noteDur = this.props.playbackData.wholeNoteDuration * duration;
-          this.midiSounds.playChordAt(
-            currentTime + totalTime,
-            instrument,
-            pitches,
-            noteDur
-          );
+          //pitches will be an empty array if it is a rest
+          if(pitches.length) {
+            this.midiSounds.playChordAt(
+              currentTime + totalTime,
+              instrument,
+              pitches,
+              noteDur
+            );
+          }
+          SVGElements.push({
+            index: svgIndex,
+            startTime: Number(String(currentTime + totalTime)),
+            endTime: Number(String(currentTime + totalTime + noteDur))
+          });
+          svgIndex++;
+          //always add the duration to total time, whether a chord plays or not
           totalTime += noteDur;
       });
     });
     setTimeout(() => {
       this.setState({ ...this.state, playing: false });
     }, totalTime * 1000);
+    //LOGIC FOR SELECTING NOTES NEEDS MORE WORK
+    let processedElements = 0;
+    const foo = document.querySelectorAll(`[data-index="${12}"]`)[0];
+    foo.setAttribute("fill", "#ff0000");
+    while(processedElements < svgIndex) {
+      const currentTime = this.midiSounds.contextTime();
+      for(let i = 0; i < SVGElements.length; i++) {
+        const svgElem = document.querySelectorAll(`[data-index="${SVGElements[i].index}"]`)[0];
+        console.log(SVGElements[i].startTime, SVGElements[i].endTime, currentTime);
+        if(SVGElements[i].startTime >= currentTime && SVGElements[i].endTime <= currentTime) {
+          console.log("elem found");
+          svgElem.setAttribute("fill", "#ff0000");
+          processedElements++;
+        } else {
+          console.log("else");
+          svgElem.setAttribute("fill", "#000000");
+        }
+      }
+      processedElements++;
+    }
   }
 
   handleClick() {

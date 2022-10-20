@@ -1,4 +1,4 @@
-import { detuneChord, Voice } from "../Voice";
+import { detuneChord, Voice } from "../../tune/Voice";
 
 export abstract class Instrument {
     public L:number;
@@ -6,21 +6,26 @@ export abstract class Instrument {
     public subname:string;
     public MIDINum:number;
     public key:string;
+    public isTransposing:boolean;
     public transpose:number;
     public scoreOrder:number;
+    public concertPitchRange:number[];
+    public comfortableCPRange:number[];
     public partLabel:string; //ex clarinet 1, 2
-    public voices:Voice[];
-
-    constructor(L:number, name:string, subname:string, MIDINum:number, key:string, transpose:number, scoreOrder:number, partLabel:string) {
+    public voices:Voice[] = [];
+    
+    constructor(L:number, name:string, subname:string, MIDINum:number, key:string, isTransposing:boolean, transpose:number, scoreOrder:number, concertPitchRange:number[], comfortableCPRange:number[], partLabel:string) {
         this.L=L;
         this.name=name;
         this.subname=subname;
         this.MIDINum=MIDINum;
         this.key=key;
+        this.isTransposing = isTransposing;
         this.transpose=transpose;
         this.scoreOrder=scoreOrder;
+        this.concertPitchRange = concertPitchRange;
+        this.comfortableCPRange = comfortableCPRange;
         this.partLabel=partLabel;
-        this.voices=[];
     }
 
     get voicesString() {

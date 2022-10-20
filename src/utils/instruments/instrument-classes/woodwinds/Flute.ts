@@ -1,8 +1,9 @@
-import { Instrument } from "./Instrument";
-import { INSTRUMENTS_IN_SCORE_ORDER } from "./constants";
-import { Voice, detuneChord } from "../Voice";
+import { Instrument } from "../../superclasses/Instrument";
+import { NonTransposingInstrument } from "../../superclasses/NonTransposingInstrument";
+import { INSTRUMENTS_IN_SCORE_ORDER } from "../../constants";
+import { Voice, detuneChord } from "../../../tune/Voice";
 
-export class Flute extends Instrument {
+export class Flute extends NonTransposingInstrument {
     private voiceNames:string[];
 
     constructor(L:number, scoreKey:string, partLabel:string) {
@@ -11,9 +12,10 @@ export class Flute extends Instrument {
             Instrument.appendPartLabel("Flute", partLabel), 
             Instrument.appendPartLabel("Fl.", partLabel), 
             771, 
-            scoreKey, 
-            0, 
-            Instrument.getScoreOrder(INSTRUMENTS_IN_SCORE_ORDER.FLUTE, partLabel), 
+            scoreKey,
+            Instrument.getScoreOrder(INSTRUMENTS_IN_SCORE_ORDER.FLUTE, partLabel),
+            [59, 96], //low B to C7
+            [59, 89], //low B to F6
             partLabel
         );
         this.voiceNames = [];

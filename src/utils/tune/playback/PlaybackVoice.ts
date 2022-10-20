@@ -1,5 +1,5 @@
 import { Chord } from "./Chord";
-import { detuneChord } from "./Voice";
+import { detuneChord } from "../Voice";
 import { notationToChords, noteToMidiNumber } from "./notationToChords";
 
 export class PlaybackVoice {
@@ -24,6 +24,11 @@ export class PlaybackVoice {
         detuneChords.forEach(chordDetuning => {
             const chordToDetune = v.chords[chordDetuning.chordIndex];
             chordDetuning.detunePitches.forEach(pitchDetuning => {
+                console.log("doing stuff");
+                console.log(pitchDetuning.pitch);
+                console.log(key);
+                console.log(transpose);
+                console.log(noteToMidiNumber(pitchDetuning.pitch, key, transpose));
                 let pitchIndex = chordToDetune.pitches.findIndex(a => a === noteToMidiNumber(pitchDetuning.pitch, key, transpose));
                 if(pitchIndex >= 0) chordToDetune.pitches[pitchIndex] += pitchDetuning.detuneBy;
             });

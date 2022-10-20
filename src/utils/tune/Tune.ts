@@ -1,10 +1,11 @@
-import { evalFraction } from "./generic/evalFraction";
-import { PlaybackData } from "./PlaybackData";
-import { Instrument } from "./instruments/Instrument";
-import { Flute } from "./instruments/Flute";
-import { Piano } from "./instruments/Piano";
-import { INSTRUMENTS_IN_SCORE_ORDER } from "./instruments/constants";
-import { BbClarinet } from "./instruments/BbClarinet";
+import { evalFraction } from "../generic/evalFraction";
+import { PlaybackData } from "./playback/PlaybackData";
+import { Instrument } from "../instruments/superclasses/Instrument";
+import { Flute } from "../instruments/instrument-classes/woodwinds/Flute";
+import { Piano } from "../instruments/instrument-classes/keyboards/Piano";
+import { INSTRUMENTS_IN_SCORE_ORDER } from "../instruments/constants";
+import { BbClarinet } from "../instruments/instrument-classes/woodwinds/BbClarinet";
+import { TransposingInstrument } from "../instruments/superclasses/TransposingInstrument";
 
 export class Tune {
     M:string;
@@ -58,8 +59,22 @@ ${this.voicesString}
 );
     }
 
+    toCPABC() {
+        return (
+`X: 1
+M: ${this.M}
+L: ${this.L}
+K:
+%%staves ${this.staves}
+${this.concertPitchVoicesString}
+`       
+        );
+    }
+
     toMIDIInTune() {
         let playbackData = new PlaybackData(evalFraction(this.L), this.tempo.bpm);
+        //sort the instruments so the order they are added to playback data matches the order they are added to score
+        this.instruments.sort((a, b) => a.scoreOrder - b.scoreOrder);
         for(let instrument of this.instruments) {
             for(let voice of instrument.inTunePlaybackData) playbackData.addVoice(voice);
         }
@@ -68,6 +83,7 @@ ${this.voicesString}
 
     toMIDIDetuned() {
         let playbackData = new PlaybackData(evalFraction(this.L), this.tempo.bpm);
+        this.instruments.sort((a, b) => a.scoreOrder - b.scoreOrder);
         for(let instrument of this.instruments) {
             for(let voice of instrument.detunedPlaybackData) playbackData.addVoice(voice);
         }
@@ -87,5 +103,13 @@ ${this.voicesString}
         return this.instruments.map(i => {
             return i.voicesString;
         }).join("\n")
+    }
+
+    private get concertPitchVoicesString() {
+        return this.instruments.map(i => {
+            if(i.isTransposing) {
+                return (i as TransposingInstrument).concertPitchVoicesString;
+            } else return i.voicesString;
+        }).join("\n");
     }
 }

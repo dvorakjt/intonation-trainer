@@ -7,27 +7,20 @@ type NoteDisplayProps = {
 }
 
 export const NoteDisplay = ({abcNotation}:NoteDisplayProps) => {
+    const id = "target" + Math.random() * 100;
+
     useEffect(() => {
-        const target = document.getElementById("target");
+        const target = document.getElementById(id);
         target && abcjs.renderAbc(target, abcNotation);
     }, []);
 
+    useEffect(() => {
+      const target = document.getElementById(id);
+      target && abcjs.renderAbc(target, abcNotation);
+  }, [abcNotation]);
+
     return (
-        <div>
-          <h2>Ear trainer (WIP, begun 9-1-2022)</h2>
-          <p>below are the beginnings to an ear training application.</p>
-          <div id="target">
+          <div id={id}>
           </div>
-          <p>This application will feature:</p>
-          <ul style={{listStyleType:"none"}}>
-            <li>Midi orchestra instrument sounds</li>
-            <li>Interval identification</li>
-            <li>Scale identification</li>
-            <li>Chord identification</li>
-            <li>Intonation practice on various intervals and scales</li>
-            <li>Intonation practice on melody plus accompaniment</li>
-          </ul>
-          <p>Stay tuned for more!</p>
-        </div>
     )
 }

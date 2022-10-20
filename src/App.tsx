@@ -1,13 +1,15 @@
-import React from 'react';
+import React, {useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { Tune } from "./utils/Tune";
+import { Tune } from "./utils/tune/Tune";
 import {MIDIPlayer} from "./features/playback/components/MIDIPlayer";
 import {NoteDisplay} from "./features/music-notation/NoteDisplay";
 import { INSTRUMENTS_IN_SCORE_ORDER } from "./utils/instruments/constants";
-import { Piano } from './utils/instruments/Piano';
+import { Piano } from './utils/instruments/instrument-classes/keyboards/Piano';
 
 function App() {
+  const [showInConcertPitch, setShowInConcertPitch] = useState(false);
+
   const t = new Tune("C", "1/4", "C", 60);
   const flute = t.addInstrument(INSTRUMENTS_IN_SCORE_ORDER.FLUTE, "1");
   flute.addVoice("cdef | g/f/e/d/ c2 |]", 0, []);
@@ -19,21 +21,22 @@ function App() {
       chordIndex: 8,
       detunePitches: [
         {
-          pitch: "c",
+          pitch: "d", //right now, this has to be the WRITTEN pitch. I need to fix this somehow
           detuneBy: 0.5
         }
       ]
     }
   ])
   const piano = t.addInstrument(INSTRUMENTS_IN_SCORE_ORDER.PIANO, "");
-  (piano as Piano).addVoiceLH("[CEG]2 [CEA]2 | [CEG] [GFDB,] [CEGc]2 |]", 0, []);
+  (piano as Piano).addVoiceLH("z2 [CEA]2 | [CEG] [GFDB,] [CEGc]2 |]", 0, []);
   (piano as Piano).addVoiceRH("C,4 | G, G,, C,2 |]", 0, []);
-
-  console.log(t.toMIDIInTune());
 
   return (
     <div className="App">
-      <NoteDisplay abcNotation={t.toABC()} />
+      <NoteDisplay abcNotation={!showInConcertPitch ? t.toABC() : t.toCPABC()} />
+      <input type="checkbox" onChange={(e) => {
+        setShowInConcertPitch(e.target.checked);
+      }} /><label>Display in Concert Pitch</label><br />
       <MIDIPlayer volume={0.2} playbackData={t.toMIDIInTune()} />
       <MIDIPlayer volume={0.2} playbackData={t.toMIDIDetuned()} />
     </div>
