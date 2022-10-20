@@ -37,8 +37,8 @@ function App() {
       <input type="checkbox" onChange={(e) => {
         setShowInConcertPitch(e.target.checked);
       }} /><label>Display in Concert Pitch</label><br />
-      <MIDIPlayer volume={0.2} playbackData={t.toMIDIInTune()} />
-      <MIDIPlayer volume={0.2} playbackData={t.toMIDIDetuned()} />
+      <MIDIPlayer volume={0.2} playbackData={t.toMIDIInTune()} controlsNotation={true} />
+      <MIDIPlayer volume={0.2} playbackData={t.toMIDIDetuned()} controlsNotation={true} />
     </div>
   );
 }

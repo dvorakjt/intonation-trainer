@@ -9,18 +9,23 @@ import { faStop } from "@fortawesome/free-solid-svg-icons";
 type PlayerProps = {
     playbackData:PlaybackData;
     volume:number;
+    controlsNotation:boolean;
 }
 
 type PlayerState = {
     playing:boolean;
     volume:number;
+    coolingDown:boolean;
 }
 
 export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
   state = {
     playing: false,
-    volume: this.props.volume
+    volume: this.props.volume,
+    coolingDown:false
   }
+
+  timeoutIds:any[] = [];
 
   midiSounds:any;
 
@@ -37,7 +42,6 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
 
   playMelody() {
     const currentTime = this.midiSounds.contextTime();
-    this.setState({ ...this.state, playing: true });
     let totalTime = 0;
     let svgIndex = 0;
     const SVGElements:any[] = [];
@@ -47,7 +51,8 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
       chords.forEach(c => {
           const { pitches, duration } = c;
           const noteDur = this.props.playbackData.wholeNoteDuration * duration;
-          //pitches will be an empty array if it is a rest
+          console.log(currentTime + totalTime);
+          console.log(currentTime + totalTime);
           if(pitches.length) {
             this.midiSounds.playChordAt(
               currentTime + totalTime,
@@ -56,12 +61,14 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
               noteDur
             );
           }
-          SVGElements.push({
-            index: svgIndex,
-            startTime: Number(String(currentTime + totalTime)),
-            endTime: Number(String(currentTime + totalTime + noteDur))
-          });
-          svgIndex++;
+          if(this.props.controlsNotation) {
+            SVGElements.push({
+              index: svgIndex,
+              startTime: totalTime * 1000,
+              duration: noteDur * 1000
+            });
+            svgIndex++;
+          }
           //always add the duration to total time, whether a chord plays or not
           totalTime += noteDur;
       });
@@ -69,25 +76,18 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
     setTimeout(() => {
       this.setState({ ...this.state, playing: false });
     }, totalTime * 1000);
-    //LOGIC FOR SELECTING NOTES NEEDS MORE WORK
-    let processedElements = 0;
-    const foo = document.querySelectorAll(`[data-index="${12}"]`)[0];
-    foo.setAttribute("fill", "#ff0000");
-    while(processedElements < svgIndex) {
-      const currentTime = this.midiSounds.contextTime();
-      for(let i = 0; i < SVGElements.length; i++) {
-        const svgElem = document.querySelectorAll(`[data-index="${SVGElements[i].index}"]`)[0];
-        console.log(SVGElements[i].startTime, SVGElements[i].endTime, currentTime);
-        if(SVGElements[i].startTime >= currentTime && SVGElements[i].endTime <= currentTime) {
-          console.log("elem found");
-          svgElem.setAttribute("fill", "#ff0000");
-          processedElements++;
-        } else {
-          console.log("else");
-          svgElem.setAttribute("fill", "#000000");
-        }
-      }
-      processedElements++;
+    
+    if(this.props.controlsNotation) {
+      SVGElements.forEach((elem) => {
+        const id = setTimeout(() => {
+          const el = document.querySelectorAll(`[data-index="${elem.index}"]`)[0];
+          el.setAttribute("fill", "#008B8B");
+          setTimeout(() => {
+            el.setAttribute("fill", "#000");
+          }, elem.duration);
+        }, elem.startTime);
+        this.timeoutIds.push(id);
+      });
     }
   }
 
@@ -96,8 +96,19 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
       this.setState({ ...this.state, playing: true });
       this.playMelody();
     } else {
-      this.setState({ ...this.state, playing: false });
+      this.setState({ ...this.state, playing: false, coolingDown: true });
       this.midiSounds.cancelQueue();
+      for(let i = 0; i < this.timeoutIds.length; i++) {
+        clearTimeout(this.timeoutIds[i]);
+      }
+      this.timeoutIds = [];
+      const highlightedNotes = document.querySelectorAll('[fill="#008B8B"]');
+      highlightedNotes.forEach((elem) => {
+        elem.setAttribute("fill", "#000");
+      });
+      setTimeout(() => {
+        this.setState({...this.state, coolingDown: false});
+      }, 250);
     }
   }
 
@@ -113,6 +124,7 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
         </div>
         <button
           onClick={this.handleClick.bind(this)}
+          disabled={this.state.coolingDown}
         >
           <FontAwesomeIcon
             style={{ color: this.state.playing ? "A86561" : "#008080" }}
