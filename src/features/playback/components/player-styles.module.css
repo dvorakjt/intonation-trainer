@@ -1,0 +1,23 @@
+.highlighted {
+    animation: highlight 100ms linear 1 forwards;
+}
+
+.unhighlighted {
+    animation: unhighlight 250ms linear 1 forwards;
+}
+
+@keyframes highlight {
+    from {
+        fill: black;
+    } to {
+        fill: limegreen;
+    }
+}
+
+@keyframes unhighlight {
+    from {
+        fill: limegreen;
+    } to {
+        fill: black;
+    }
+}

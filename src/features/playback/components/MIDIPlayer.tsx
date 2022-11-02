@@ -4,28 +4,34 @@ import MIDISounds from "midi-sounds-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import { faStop } from "@fortawesome/free-solid-svg-icons";
-// import styles from "./midi-player.module.css";
+import styles from "./player-styles.module.css";
 
 type PlayerProps = {
     playbackData:PlaybackData;
     volume:number;
     controlsNotation:boolean;
+    disabled:boolean;
+    parentStateFunction:any;
 }
 
 type PlayerState = {
     playing:boolean;
     volume:number;
     coolingDown:boolean;
+    disabled:boolean;
 }
 
 export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
   state = {
     playing: false,
     volume: this.props.volume,
-    coolingDown:false
+    coolingDown:false,
+    disabled: this.props.disabled
   }
 
   timeoutIds:any[] = [];
+
+  stopPlayingTimeoutId:any = null;
 
   midiSounds:any;
 
@@ -38,9 +44,13 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
       this.setState({ ...this.state, volume: this.props.volume });
       this.midiSounds.setMasterVolume(this.props.volume);
     }
+    if(this.props.disabled !== prevProps.disabled) {
+      this.setState({...this.state, disabled: this.props.disabled});
+    }
   }
 
   playMelody() {
+    if(this.stopPlayingTimeoutId) clearTimeout(this.stopPlayingTimeoutId);
     const currentTime = this.midiSounds.contextTime();
     let totalTime = 0;
     let svgIndex = 0;
@@ -51,8 +61,6 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
       chords.forEach(c => {
           const { pitches, duration } = c;
           const noteDur = this.props.playbackData.wholeNoteDuration * duration;
-          console.log(currentTime + totalTime);
-          console.log(currentTime + totalTime);
           if(pitches.length) {
             this.midiSounds.playChordAt(
               currentTime + totalTime,
@@ -73,17 +81,20 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
           totalTime += noteDur;
       });
     });
-    setTimeout(() => {
+    this.stopPlayingTimeoutId = setTimeout(() => {
       this.setState({ ...this.state, playing: false });
+      if(this.props.parentStateFunction) this.props.parentStateFunction(false);
     }, totalTime * 1000);
     
     if(this.props.controlsNotation) {
       SVGElements.forEach((elem) => {
         const id = setTimeout(() => {
           const el = document.querySelectorAll(`[data-index="${elem.index}"]`)[0];
-          el.setAttribute("fill", "#008B8B");
+          el.classList.remove(styles.unhighlighted);
+          el.classList.add(styles.highlighted);
           setTimeout(() => {
-            el.setAttribute("fill", "#000");
+            el.classList.add(styles.unhighlighted);
+            el.classList.remove(styles.highlighted);
           }, elem.duration);
         }, elem.startTime);
         this.timeoutIds.push(id);
@@ -93,18 +104,21 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
 
   handleClick() {
     if (!this.state.playing) {
+      if(this.props.parentStateFunction) this.props.parentStateFunction(true);
       this.setState({ ...this.state, playing: true });
       this.playMelody();
     } else {
+      if(this.props.parentStateFunction) this.props.parentStateFunction(false);
       this.setState({ ...this.state, playing: false, coolingDown: true });
       this.midiSounds.cancelQueue();
       for(let i = 0; i < this.timeoutIds.length; i++) {
         clearTimeout(this.timeoutIds[i]);
       }
       this.timeoutIds = [];
-      const highlightedNotes = document.querySelectorAll('[fill="#008B8B"]');
+      const highlightedNotes = Array.from(document.getElementsByClassName(styles.highlighted));
       highlightedNotes.forEach((elem) => {
-        elem.setAttribute("fill", "#000");
+        elem.classList.add(styles.unhighlighted);
+        elem.classList.remove(styles.highlighted);
       });
       setTimeout(() => {
         this.setState({...this.state, coolingDown: false});
@@ -124,7 +138,7 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
         </div>
         <button
           onClick={this.handleClick.bind(this)}
-          disabled={this.state.coolingDown}
+          disabled={this.state.disabled || this.state.coolingDown}
         >
           <FontAwesomeIcon
             style={{ color: this.state.playing ? "A86561" : "#008080" }}

@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import { Tune } from "./utils/tune/Tune";
 import {MIDIPlayer} from "./features/playback/components/MIDIPlayer";
+import { NotatedMIDIPlayer } from './features/playback/components/NotatedMIDIPlayer.component';
 import {NoteDisplay} from "./features/music-notation/NoteDisplay";
 import { INSTRUMENTS_IN_SCORE_ORDER } from "./utils/instruments/constants";
 import { Piano } from './utils/instruments/instrument-classes/keyboards/Piano';
@@ -37,8 +38,7 @@ function App() {
       <input type="checkbox" onChange={(e) => {
         setShowInConcertPitch(e.target.checked);
       }} /><label>Display in Concert Pitch</label><br />
-      <MIDIPlayer volume={0.2} playbackData={t.toMIDIInTune()} controlsNotation={true} />
-      <MIDIPlayer volume={0.2} playbackData={t.toMIDIDetuned()} controlsNotation={true} />
+      <NotatedMIDIPlayer tune={t} showConcertPitchDisplayOption={true} showDetunedPlayer={true} />
     </div>
   );
 }
