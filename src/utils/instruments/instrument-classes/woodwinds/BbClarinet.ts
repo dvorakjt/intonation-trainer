@@ -2,15 +2,13 @@ import { Instrument } from "../../superclasses/Instrument";
 import { TransposingInstrument } from "../../superclasses/TransposingInstrument";
 import { INSTRUMENTS_IN_SCORE_ORDER } from "../../constants";
 import { Voice, detuneChord } from "../../../tune/Voice";
-import { transposeKey, transposeNotes  } from "../../../key-signatures/transposition/transpositionUtils";
+import { transposeKey, transposeNotes, transposeDetunings  } from "../../../key-signatures/transposition/transpositionUtils";
 
 export class BbClarinet extends TransposingInstrument {
     private voiceNames:string[] = [];
 
     constructor(L:number, scoreKey:string, partLabel:string) {
-        console.log(scoreKey);
         const tranposedKey = transposeKey(scoreKey, 1); //transpose up a whole step
-        console.log(scoreKey);
         super(
             L, 
             Instrument.appendPartLabel("B♭ Clarinet", partLabel), 
@@ -28,13 +26,14 @@ export class BbClarinet extends TransposingInstrument {
 
     //adds voice from notes in concert pitch
     addVoice(notes: string, detuneAll:number, detuneChords:detuneChord[]): void {
-        console.log(detuneChords);
         const voiceName = "BbClarinet" + (this.partLabel ? this.partLabel : "0") + "V" + this.voices.length;
         this.voiceNames.push(voiceName);
         const transposedNotes = transposeNotes(this.scoreKey, notes, 1);
-        const v = new Voice(this.L, voiceName, this.MIDINum, this.key, this.transpose, "treble", transposedNotes, detuneAll, detuneChords, this.name, this.subname);
+        //transpose detuned notes too
+        const transposedDetuneChords = transposeDetunings(this.scoreKey, detuneChords, 1);
+        const v = new Voice(this.L, voiceName, this.MIDINum, this.key, this.transpose, "treble", transposedNotes, detuneAll, transposedDetuneChords, this.name, this.subname);
         this.voices.push(v);
-        const concertPitchVoice = new Voice(this.L, voiceName, this.MIDINum, this.scoreKey, 0, "treble", notes, detuneAll, detuneChords, this.name, this.subname);
+        const concertPitchVoice = new Voice(this.L, voiceName, this.MIDINum, this.scoreKey, 0, "treble", notes, detuneAll, transposedDetuneChords, this.name, this.subname);
         this.concertPitchVoices.push(concertPitchVoice);
     }
 

@@ -6,6 +6,68 @@
     animation: unhighlight 250ms linear 1 forwards;
 }
 
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controls {
+    display: flex;
+    background-color: #121212;
+    border-radius: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    align-items: center;
+    width: 540px;
+    margin-left: 100px;
+}
+
+.controlsSm {
+    display: flex;
+    background-color: #121212;
+    border-radius: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    align-items: center;
+    width: 440px;
+}
+
+.playBtnContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    margin-right: 8px;
+    width: 160px;
+}
+
+.checkboxContainer {
+    display: flex;
+    align-items: center;
+    width: 160px;
+    margin-right: 8px;
+}
+
+.controlsText {
+    color: white;
+    font-size: 12px;
+}
+
+.playBtn {
+    background-color: transparent;
+    border:none;
+    margin-left: -4px;
+}
+
+.playBtnIcon {
+    color: white;
+}
+
 @keyframes highlight {
     from {
         fill: black;

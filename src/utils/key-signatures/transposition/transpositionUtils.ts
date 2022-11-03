@@ -1,4 +1,5 @@
 import * as abcTranspose from "abc-transpose";
+import { detuneChord } from "../../tune/Voice";
 
 export const instrumentKeys = [
     "C",
@@ -39,6 +40,17 @@ export function transposeNotes(key:string, notes:string, steps:number) {
     const transposedNotes = keyAndNotes[1];
     return transposedNotes;
 } 
+
+export function transposeDetunings(key:string, detunings:detuneChord[], steps:number) {
+    return detunings.map((detuning) => {
+        return {...detuning, detunePitches : detuning.detunePitches.map((detunePitch) => {
+            return {
+                ...detunePitch,
+                pitch: transposeNotes(key, detunePitch.pitch, steps)
+            }
+        })}
+    });
+}
 
 function transposeAbcTune(abcTune:string, steps:number) {
     if(steps === 0) return abcTune;

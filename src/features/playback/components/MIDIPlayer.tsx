@@ -138,10 +138,11 @@ export class MIDIPlayer extends Component<PlayerProps, PlayerState> {
         </div>
         <button
           onClick={this.handleClick.bind(this)}
+          className={styles.playBtn}
           disabled={this.state.disabled || this.state.coolingDown}
         >
           <FontAwesomeIcon
-            style={{ color: this.state.playing ? "A86561" : "#008080" }}
+            className={styles.playBtnIcon}
             icon={!this.state.playing ? faPlay : faStop}
             size="2x"
           />

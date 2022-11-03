@@ -2,8 +2,8 @@ import React, {useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { Tune } from "./utils/tune/Tune";
-import {MIDIPlayer} from "./features/playback/components/MIDIPlayer";
 import { NotatedMIDIPlayer } from './features/playback/components/NotatedMIDIPlayer.component';
+import { UnnotatedMIDIPlayer } from './features/playback/components/UnnotatedMIDIPlayer';
 import {NoteDisplay} from "./features/music-notation/NoteDisplay";
 import { INSTRUMENTS_IN_SCORE_ORDER } from "./utils/instruments/constants";
 import { Piano } from './utils/instruments/instrument-classes/keyboards/Piano';
@@ -22,7 +22,7 @@ function App() {
       chordIndex: 8,
       detunePitches: [
         {
-          pitch: "d", //right now, this has to be the WRITTEN pitch. I need to fix this somehow
+          pitch: "c",
           detuneBy: 0.5
         }
       ]
@@ -34,11 +34,7 @@ function App() {
 
   return (
     <div className="App">
-      <NoteDisplay abcNotation={!showInConcertPitch ? t.toABC() : t.toCPABC()} />
-      <input type="checkbox" onChange={(e) => {
-        setShowInConcertPitch(e.target.checked);
-      }} /><label>Display in Concert Pitch</label><br />
-      <NotatedMIDIPlayer tune={t} showConcertPitchDisplayOption={true} showDetunedPlayer={true} />
+      <NotatedMIDIPlayer tune={t} isTuningExercise={true} showInTunePlayer={true} showConcertPitchDisplayOption={true}/>
     </div>
   );
 }
