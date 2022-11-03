@@ -1,7 +1,7 @@
-import { Instrument } from "../../superclasses/Instrument";
-import { NonTransposingInstrument } from "../../superclasses/NonTransposingInstrument";
-import { INSTRUMENTS_IN_SCORE_ORDER } from "../../constants";
-import { Voice, detuneChord } from "../../../tune/Voice";
+import { Instrument } from "../../../superclasses/Instrument";
+import { NonTransposingInstrument } from "../../../superclasses/NonTransposingInstrument";
+import { INSTRUMENTS_IN_SCORE_ORDER } from "../../../constants";
+import { Voice, detuneChord } from "../../../../tune/Voice";
 
 export class Flute extends NonTransposingInstrument {
     private voiceNames:string[];
